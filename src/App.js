@@ -1,28 +1,46 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import SideDrawer from './components/SideDrawer'
+import Details from './components/Details'
 
 class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
-  }
+    state = {
+        teams: {},
+        roster: {},
+        loading: true
+    }
+
+    //When a team is clicked, fetch the roster
+    handleClick = (item) => {
+        fetch(`https://statsapi.web.nhl.com/api/v1/teams/${item.key}/roster`,{ 
+            method: "GET"
+        })
+        .then(res => res.json())
+        .then(body => this.handleGetSuccess(body))
+        .catch(err => console.log(err))
+    }
+
+    //Handle Fetch Success
+    handleGetSuccess = (body) => {
+        this.setState({ roster: body.roster })
+    }
+
+    render() {
+        const { roster, loading } = this.state
+
+        return (
+            <div className="App">
+
+                <div style={{width: window.innerWidth/7}}>
+                    <SideDrawer handleClick={this.handleClick}/>
+                </div>
+
+                <div>
+                    <Details roster={roster} loading={loading}/>
+                </div>
+
+            </div>
+        );
+    }
 }
 
 export default App;
