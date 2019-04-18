@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import SideDrawer from './components/SideDrawer'
 import Details from './components/Details'
+import './styles.css/App.css'
 
 class App extends Component {
     state = {
-        teams: {},
         roster: {},
-        loading: true
     }
 
     //When a team is clicked, fetch the roster
@@ -24,18 +23,47 @@ class App extends Component {
         this.setState({ roster: body.roster })
     }
 
+    handleSort = (sortBy) => {
+        const { roster } = this.state
+        console.log(roster)
+
+        if(sortBy === 'name') {
+            roster.sort((a,b) => 
+                (a.person.fullName > b.person.fullName) 
+                ? 1 
+                : ((b.person.fullName > a.person.fullName) 
+                ? -1 
+                : 0
+            ))
+            this.setState({ roster })
+        } 
+        
+        else {
+            roster.sort((a,b) => 
+                (parseInt(a.jerseyNumber) > parseInt(b.jerseyNumber))
+                ? 1 
+                : ((parseInt(b.jerseyNumber) > parseInt(a.jerseyNumber))
+                ? -1 
+                : 0
+            ))
+            this.setState({ roster })
+        }
+    }
+
     render() {
-        const { roster, loading } = this.state
+        const { roster } = this.state
 
         return (
-            <div className="App">
+            <div className="app-container">
 
-                <div style={{width: window.innerWidth/7}}>
-                    <SideDrawer handleClick={this.handleClick}/>
-                </div>
-
-                <div>
-                    <Details roster={roster} loading={loading}/>
+                <div className='component-container'>
+                    <div style={{width: window.innerWidth/7}}>
+                        <SideDrawer handleClick={this.handleClick}/>
+                    </div>
+                    
+                    <div style={{width: window.innerWidth}}>
+                        <Details roster={roster} handleSort={this.handleSort}/>
+                    </div>
                 </div>
 
             </div>

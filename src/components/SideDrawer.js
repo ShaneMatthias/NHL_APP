@@ -1,7 +1,6 @@
 import React from 'react';
 import { Menu } from 'antd';
 import "antd/dist/antd.css";
-import '../styles.css/SideDrawer.css'
 
 export default class SideDrawer extends React.Component {
     state = { 
@@ -35,7 +34,7 @@ export default class SideDrawer extends React.Component {
         }
 
         return (
-            <Menu>
+            <Menu theme='dark'>
                 {teams.map((team) => this.renderItem(team))}
             </Menu>
         )
@@ -47,6 +46,7 @@ export default class SideDrawer extends React.Component {
             <Menu.Item onClick={item => this.props.handleClick(item)} key={team.id}>{team.name}</Menu.Item>
         )
     }
+
     
     render() {
         return (
