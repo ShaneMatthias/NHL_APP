@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react'
+import React, { Component } from 'react'
 import { Button, Menu, Icon, Spin, Avatar } from 'antd'
 import Roster from './Roster'
 import SideDrawer from './common/SideDrawer'
