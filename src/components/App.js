@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react'
 import { Button, Menu, Icon, Spin, Avatar } from 'antd'
 import Roster from './Roster'
-import SideDrawer from './SideDrawer'
+import SideDrawer from './common/SideDrawer'
 
 import '../styles/App.css'
 
@@ -14,7 +14,6 @@ class App extends Component {
         loading: true,
     }
 
-    //////////////////////////////////
     //Fetching teams for drawer menu//
     componentDidMount() {
         fetch('https://statsapi.web.nhl.com/api/v1/teams',{ 
@@ -27,11 +26,9 @@ class App extends Component {
         .catch(err => alert(err))
     }
 
-    ////////////////////////////////////
     //Callback for closing side drawer//
     closeDrawer = () => {this.setState({ drawerVisible: false })}
 
-    ////////////////////////////////////////////
     //Fetch the roster when a team is clicked//
     handleTeamSelect = (item) => {
         this.setState({ loading: true, drawerVisible: false })
@@ -45,7 +42,6 @@ class App extends Component {
         .catch(err => alert(err))
     }
 
-    ///////////////////////////////
     //Render list for drawer menu//
     renderMenu = (teams, loading) => {
         if(loading) 
@@ -64,7 +60,6 @@ class App extends Component {
         )
     }
 
-    ///////////////////////////////////////////////
     //Render the table title base on team clicked//
     renderTableTitle = (teams, loading, id) => {
         if(loading || !teams.length || id === 0)
@@ -74,11 +69,12 @@ class App extends Component {
 
         return <h1>{teamName[0].name}</h1>
     }
-
-    ////////////////////////////////////
-    //Callback for closing side drawer//
-    closeDrawer = () => {this.setState({ drawerVisible: false })}
  
+
+    renderTest = (state) => {
+        alert(state)
+    }
+
     render() {
         const { roster, teams, teamID, drawerVisible, loading } = this.state
 

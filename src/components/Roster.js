@@ -1,11 +1,11 @@
-import React from 'react';
-import { Table, Spin } from 'antd';
-import PopUpModal from './PopUpModal'
-import { objectEmpty } from '../helpers/objectEmpty'
+import React, { Component } from 'react'
+import { Table, Spin } from 'antd'
+import PopUpModal from './common/PopUpModal'
+import { isEmpty } from 'lodash'
 import "antd/dist/antd.css";
 import '../styles/Roster.css'
 
-export default class Roster extends React.Component {
+export default class Roster extends Component {
     state = { 
         modalVisible: false,
         player: {},
@@ -13,14 +13,40 @@ export default class Roster extends React.Component {
         loading: false
     }
 
-    //////////////////////////////
-    //Rendering the roster table//
-    //Along with sorting and filtering//
+    //Fetch player data when a player from the table is clicked//
+    handlePlayerClick = (item) => {
+        this.setState({ loading: true })
+
+        fetch(`https://statsapi.web.nhl.com/api/v1/people/${item.person.id}`,{ 
+            method: "GET"
+        })
+        .then(res => res.json())
+        .then(body => this.fetchCountry(body))
+        .catch(err => alert(err))
+    }
+
+    //Fetch country using external API//
+    fetchCountry = (data) => {
+        const code = data.people[0].nationality
+        const player = data.people[0]
+
+        fetch(`https://restcountries.eu/rest/v2/alpha/${code}`,{ 
+            method: "GET"
+        })
+        .then(res => res.json())
+        .then(body => this.setState({ country: body, player: player  }, () => {
+            this.setState({ modalVisible: true, loading: false })
+        }))
+        .catch(err => alert(err))
+    }
+    
+    //Rendering the roster table
+    //Along with sorting and filtering
     renderRoster = (roster) => {
         const width = window.innerWidth
         const { loading } = this.state
 
-        if(objectEmpty(roster)) {
+        if(isEmpty(roster)) {
             return (
                 <div className='tooltip-container'>
                     <span className='tooltip'>Please Open the drawer by clicking on the icon on the top left and select a team.</span>
@@ -80,35 +106,6 @@ export default class Roster extends React.Component {
         )
     }
 
-    /////////////////////////////////////////////////////////////
-    //Fetch player data when a player from the table is clicked//
-    handlePlayerClick = (item) => {
-        this.setState({ loading: true })
-
-        fetch(`https://statsapi.web.nhl.com/api/v1/people/${item.person.id}`,{ 
-            method: "GET"
-        })
-        .then(res => res.json())
-        .then(body => this.fetchCountry(body))
-        .catch(err => alert(err))
-    }
-
-    ////////////////////////////////////
-    //Fetch country using external API//
-    fetchCountry = (data) => {
-        const code = data.people[0].nationality
-        const player = data.people[0]
-
-        fetch(`https://restcountries.eu/rest/v2/alpha/${code}`,{ 
-            method: "GET"
-        })
-        .then(res => res.json())
-        .then(body => this.setState({ country: body, player: player  }, () => {
-            this.setState({ modalVisible: true, loading: false })
-        }))
-        .catch(err => alert(err))
-    }
-
     render() {
         const width = window.innerWidth
         const height = window.innerHeight
@@ -117,7 +114,6 @@ export default class Roster extends React.Component {
 
         return (
             <React.Fragment>
-
                <PopUpModal
                     width={width/10}
                     height={height/10}
