@@ -1,5 +1,6 @@
 import React from 'react';
 import { Modal, Table, Spin } from 'antd';
+import { objectEmpty } from '../helpers/objectEmpty'
 import "antd/dist/antd.css";
 import '../styles/Roster.css'
 
@@ -11,15 +12,6 @@ export default class Roster extends React.Component {
         loading: false
     }
 
-    ///////////////////////////////////////////////
-    //Function for checking is an object is empty//
-    objectEmpty = (obj) => {
-        for (let prop in obj) { 
-            return false; 
-        } 
-        return true; 
-    }
-
     //////////////////////////////
     //Rendering the roster table//
     //Along with sorting and filtering//
@@ -27,7 +19,7 @@ export default class Roster extends React.Component {
         const width = window.innerWidth
         const { loading } = this.state
 
-        if(this.objectEmpty(roster)) {
+        if(objectEmpty(roster)) {
             return (
                 <div className='tooltip-container'>
                     <span className='tooltip'>Please Open the drawer by clicking on the icon on the top left and select a team.</span>

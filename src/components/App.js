@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
-import { Drawer, Button, Menu, Icon, Spin, Avatar } from 'antd'
+import { Button, Menu, Icon, Spin, Avatar, AutoComplete } from 'antd'
 import Roster from './Roster'
+import SideDrawer from './SideDrawer'
+
 import '../styles/App.css'
 
 class App extends Component {
     state = {
         roster: {},
-        teams: {},
+        teams: [],
+        teamID: 0,
         drawerVisible: false,
         loading: true
     }
@@ -24,6 +27,10 @@ class App extends Component {
         .catch(err => console.log(err))
     }
 
+    ////////////////////////////////////
+    //Callback for closing side drawer//
+    closeDrawer = () => {this.setState({ drawerVisible: false })}
+
     ////////////////////////////////////////////
     //Fetch the roster when a team is clicked//
     handleTeamSelect = (item) => {
@@ -32,7 +39,7 @@ class App extends Component {
             method: "GET"
         })
         .then(res => res.json())
-        .then(body => this.setState({ roster: body.roster }, ()=> {
+        .then(body => this.setState({ roster: body.roster, teamID: item.key }, ()=> {
             this.setState({ loading: false })
         }))
         .catch(err => console.log(err))
@@ -45,7 +52,7 @@ class App extends Component {
             return <Spin spinning={loading}></Spin>
 
         return (
-            <Menu style={{width: window.innerWidth/7, marginLeft: -window.innerWidth/60 }} theme='light'>
+            <Menu style={{width: window.innerWidth/6, marginLeft: -window.innerWidth/60 }} theme='light'>
                 {teams.map(team => { 
                     return (
                         <Menu.Item onClick={team => this.handleTeamSelect(team)} key={team.id}>
@@ -57,28 +64,48 @@ class App extends Component {
         )
     }
 
+    ///////////////////////////////////////////////
+    //Render the table title base on team clicked//
+    renderTableTitle = (teams, loading, id) => {
+        if(loading || !teams.length || id === 0)
+            return <h1>No Roster</h1>
+        
+        const teamName = teams.filter(team => parseInt(team.id) === parseInt(id))
+
+        return <h1>{teamName[0].name}</h1>
+    }
+
+    ////////////////////////////////////
+    //Callback for closing side drawer//
+    closeDrawer = () => {this.setState({ drawerVisible: false })}
+ 
     render() {
-        const { roster, teams, drawerVisible, loading } = this.state
+        const { roster, teams, teamID, drawerVisible, loading } = this.state
 
         return (
             <React.Fragment>
+                <div className='header-container'>
+                    <div>
+                        <Button onClick={() => this.setState({ drawerVisible: true })}>
+                            <Icon type='right' />
+                        </Button>
+                    </div>
 
-                <Button onClick={() => this.setState({ drawerVisible: true })}>
-                    <Icon type='right' />
-                </Button>
+                    <div className='table-title-container'>
+                        {this.renderTableTitle(teams, loading, teamID)}
+                    </div>
+                </div>
 
                 <Spin spinning={loading}><Roster roster={roster} /></Spin>
 
-                <Drawer
-                    width={window.innerWidth/7}
-                    title='NHL Teams'
-                    placement='left'
-                    visible={drawerVisible}
-                    onClose={() => this.setState({ drawerVisible:false })}   
-                    >
-                    {this.renderMenu(teams, loading)}
-                </Drawer>
-
+                <SideDrawer 
+                    drawerVisible={drawerVisible} 
+                    drawerTitle='NHL Teams'
+                    pos='left'
+                    width={window.innerWidth/6}
+                    closeDrawer={() => this.setState({ drawerVisible: false })} 
+                    renderMenu={() => this.renderMenu(teams, loading)} 
+                    />
             </React.Fragment>
         );
     }
