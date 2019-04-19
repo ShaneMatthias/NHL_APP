@@ -1,5 +1,6 @@
 import React from 'react';
-import { Modal, Table, Spin } from 'antd';
+import { Table, Spin } from 'antd';
+import PopUpModal from './PopUpModal'
 import { objectEmpty } from '../helpers/objectEmpty'
 import "antd/dist/antd.css";
 import '../styles/Roster.css'
@@ -116,15 +117,18 @@ export default class Roster extends React.Component {
 
         return (
             <React.Fragment>
-               <Modal
-                    visible={modalVisible}
+
+               <PopUpModal
+                    width={width/10}
+                    height={height/10}
+                    modalVisible={modalVisible}
                     title="Player Info"
                     footer={false}
-                    onCancel={() => this.setState({ modalVisible: false })} >
-                    <h1>{player.fullName}</h1>
-                    <h2>{country.name}</h2>
-                    <img height={height/10} width={width/10} src={country.flag} alt='alt' />
-                </Modal>
+                    closeModal={() => this.setState({ modalVisible: false })} 
+                    headerText={player.fullName}
+                    desc={country.name}
+                    imgSrc={country.flag}
+                    />
 
                 {this.renderRoster(roster)}
             </React.Fragment>

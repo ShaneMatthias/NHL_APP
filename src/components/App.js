@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Menu, Icon, Spin, Avatar, AutoComplete } from 'antd'
+import { Button, Menu, Icon, Spin, Avatar } from 'antd'
 import Roster from './Roster'
 import SideDrawer from './SideDrawer'
 
@@ -17,14 +17,14 @@ class App extends Component {
     //////////////////////////////////
     //Fetching teams for drawer menu//
     componentDidMount() {
-        fetch('https://statsapi.web.nhl.com/api/v1/teams',{ 
+        fetch('https://statsapi.web.nhl.com/api/vs1/teams',{ 
             method: "GET"
         })
         .then(res => res.json())
         .then(body => this.setState({ teams: body.teams }, () => {
             this.setState({ loading: false })
         }))
-        .catch(err => console.log(err))
+        .catch(err => alert("ERROR BITCH"))
     }
 
     ////////////////////////////////////
