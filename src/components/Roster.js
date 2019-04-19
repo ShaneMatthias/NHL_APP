@@ -124,7 +124,6 @@ export default class Roster extends React.Component {
 
         return (
             <React.Fragment>
-  
                <Modal
                     visible={modalVisible}
                     title="Player Info"

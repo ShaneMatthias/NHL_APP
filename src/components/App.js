@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Drawer, Button, Menu, Icon, Spin, Avatar } from 'antd'
-import Roster from './components/Roster'
-import './styles/App.css'
+import Roster from './Roster'
+import '../styles/App.css'
 
 class App extends Component {
     state = {
@@ -46,8 +46,12 @@ class App extends Component {
 
         return (
             <Menu style={{width: window.innerWidth/7, marginLeft: -window.innerWidth/60 }} theme='light'>
-                {teams.map(team => { console.log(team)
-                    // return <Menu.Item onClick={team => this.handleTeamSelect(team)} key={team.id}><Avatar src={require(`./assets/${a}.png`)}/>{team.name}</Menu.Item>
+                {teams.map(team => { 
+                    return (
+                        <Menu.Item onClick={team => this.handleTeamSelect(team)} key={team.id}>
+                            <Avatar className='logo' src={require(`../assets/${team.abbreviation}.png`)}/>{team.name}
+                        </Menu.Item>
+                    )
                 })}
             </Menu>
         )
