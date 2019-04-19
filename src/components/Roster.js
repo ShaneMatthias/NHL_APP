@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Table, Spin } from 'antd'
+import { Table, Spin, notification } from 'antd'
 import PopUpModal from './common/PopUpModal'
 import { isEmpty } from 'lodash'
 import "antd/dist/antd.css";
@@ -22,7 +22,12 @@ export default class Roster extends Component {
         })
         .then(res => res.json())
         .then(body => this.fetchCountry(body))
-        .catch(err => alert(err))
+        .catch(err => {
+            notification['error']({
+                message: 'Network Error',
+                description: err.message
+            })
+        })
     }
 
     //Fetch country using external API//
@@ -30,16 +35,21 @@ export default class Roster extends Component {
         const code = data.people[0].nationality
         const player = data.people[0]
 
-        fetch(`https://restcountries.eu/rest/v2/alpha/${code}`,{ 
+        fetch(`https://resstcountries.eu/rest/v2/alspha/${code}`,{ 
             method: "GET"
         })
         .then(res => res.json())
         .then(body => this.setState({ country: body, player: player  }, () => {
             this.setState({ modalVisible: true, loading: false })
         }))
-        .catch(err => alert(err))
+        .catch(err => {
+            notification['error']({
+                message: 'Network Error',
+                description: err.message
+            })
+        })
     }
-    
+
     //Rendering the roster table
     //Along with sorting and filtering
     renderRoster = (roster) => {

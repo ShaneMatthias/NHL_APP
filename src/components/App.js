@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button, Menu, Icon, Spin, Avatar } from 'antd'
+import { Button, Menu, Icon, Spin, Avatar, notification } from 'antd'
 import Roster from './Roster'
 import SideDrawer from './common/SideDrawer'
 
@@ -12,6 +12,8 @@ class App extends Component {
         teamID: 0,
         drawerVisible: false,
         loading: true,
+        err: false,
+        errMessage: ''
     }
 
     //Fetching teams for drawer menu//
@@ -23,11 +25,13 @@ class App extends Component {
         .then(body => this.setState({ teams: body.teams }, () => {
             this.setState({ loading: false })
         }))
-        .catch(err => alert(err))
+        .catch(err => {
+            notification['error']({
+                message: 'Network Error',
+                description: err.message
+            })
+        })
     }
-
-    //Callback for closing side drawer//
-    closeDrawer = () => {this.setState({ drawerVisible: false })}
 
     //Fetch the roster when a team is clicked//
     handleTeamSelect = (item) => {
@@ -39,8 +43,16 @@ class App extends Component {
         .then(body => this.setState({ roster: body.roster, teamID: item.key }, ()=> {
             this.setState({ loading: false })
         }))
-        .catch(err => alert(err))
+        .catch(err => {
+            notification['error']({
+                message: 'Network Error',
+                description: err.message
+            })
+        })
     }
+
+    //Callback for closing side drawer//
+    closeDrawer = () => {this.setState({ drawerVisible: false })}
 
     //Render list for drawer menu//
     renderMenu = (teams, loading) => {
@@ -76,10 +88,11 @@ class App extends Component {
     }
 
     render() {
-        const { roster, teams, teamID, drawerVisible, loading } = this.state
+        const { roster, teams, teamID, drawerVisible, loading, err, errMessage } = this.state
 
         return (
             <React.Fragment>
+
                 <div className='header-container'>
                     <div>
                         <Button onClick={() => this.setState({ drawerVisible: true })}>
