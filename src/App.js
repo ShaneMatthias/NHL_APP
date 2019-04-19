@@ -1,72 +1,81 @@
 import React, { Component } from 'react';
-import SideDrawer from './components/SideDrawer'
-import Details from './components/Details'
-import './styles.css/App.css'
+import { Drawer, Button, Menu, Icon, Spin, Avatar } from 'antd'
+import Roster from './components/Roster'
+import './styles/App.css'
 
 class App extends Component {
     state = {
         roster: {},
+        teams: {},
+        drawerVisible: false,
+        loading: true
     }
 
-    //When a team is clicked, fetch the roster
-    handleClick = (item) => {
+    //////////////////////////////////
+    //Fetching teams for drawer menu//
+    componentDidMount() {
+        fetch('https://statsapi.web.nhl.com/api/v1/teams',{ 
+            method: "GET"
+        })
+        .then(res => res.json())
+        .then(body => this.setState({ teams: body.teams }, () => {
+            this.setState({ loading: false })
+        }))
+        .catch(err => console.log(err))
+    }
+
+    ////////////////////////////////////////////
+    //Fetch the roster when a team is clicked//
+    handleTeamSelect = (item) => {
+        this.setState({ loading: true, drawerVisible: false })
         fetch(`https://statsapi.web.nhl.com/api/v1/teams/${item.key}/roster`,{ 
             method: "GET"
         })
         .then(res => res.json())
-        .then(body => this.handleGetSuccess(body))
+        .then(body => this.setState({ roster: body.roster }, ()=> {
+            this.setState({ loading: false })
+        }))
         .catch(err => console.log(err))
     }
 
-    //Handle Fetch Success
-    handleGetSuccess = (body) => {
-        this.setState({ roster: body.roster })
-    }
+    ///////////////////////////////
+    //Render list for drawer menu//
+    renderMenu = (teams, loading) => {
+        if(loading) 
+            return <Spin spinning={loading}></Spin>
 
-    handleSort = (sortBy) => {
-        const { roster } = this.state
-        console.log(roster)
-
-        if(sortBy === 'name') {
-            roster.sort((a,b) => 
-                (a.person.fullName > b.person.fullName) 
-                ? 1 
-                : ((b.person.fullName > a.person.fullName) 
-                ? -1 
-                : 0
-            ))
-            this.setState({ roster })
-        } 
-        
-        else {
-            roster.sort((a,b) => 
-                (parseInt(a.jerseyNumber) > parseInt(b.jerseyNumber))
-                ? 1 
-                : ((parseInt(b.jerseyNumber) > parseInt(a.jerseyNumber))
-                ? -1 
-                : 0
-            ))
-            this.setState({ roster })
-        }
+        return (
+            <Menu style={{width: window.innerWidth/7, marginLeft: -window.innerWidth/60 }} theme='light'>
+                {teams.map(team => { console.log(team)
+                    // return <Menu.Item onClick={team => this.handleTeamSelect(team)} key={team.id}><Avatar src={require(`./assets/${a}.png`)}/>{team.name}</Menu.Item>
+                })}
+            </Menu>
+        )
     }
 
     render() {
-        const { roster } = this.state
+        const { roster, teams, drawerVisible, loading } = this.state
 
         return (
-            <div className="app-container">
+            <React.Fragment>
 
-                <div className='component-container'>
-                    <div style={{width: window.innerWidth/7}}>
-                        <SideDrawer handleClick={this.handleClick}/>
-                    </div>
-                    
-                    <div style={{width: window.innerWidth}}>
-                        <Details roster={roster} handleSort={this.handleSort}/>
-                    </div>
-                </div>
+                <Button onClick={() => this.setState({ drawerVisible: true })}>
+                    <Icon type='right' />
+                </Button>
 
-            </div>
+                <Spin spinning={loading}><Roster roster={roster} /></Spin>
+
+                <Drawer
+                    width={window.innerWidth/7}
+                    title='NHL Teams'
+                    placement='left'
+                    visible={drawerVisible}
+                    onClose={() => this.setState({ drawerVisible:false })}   
+                    >
+                    {this.renderMenu(teams, loading)}
+                </Drawer>
+
+            </React.Fragment>
         );
     }
 }
