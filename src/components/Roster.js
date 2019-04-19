@@ -35,7 +35,7 @@ export default class Roster extends Component {
         const code = data.people[0].nationality
         const player = data.people[0]
 
-        fetch(`https://resstcountries.eu/rest/v2/alspha/${code}`,{ 
+        fetch(`https://restcountries.eu/rest/v2/alpha/${code}`,{ 
             method: "GET"
         })
         .then(res => res.json())
