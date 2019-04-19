@@ -12,8 +12,6 @@ class App extends Component {
         teamID: 0,
         drawerVisible: false,
         loading: true,
-        err: false,
-        errMessage: ''
     }
 
     //Fetching teams for drawer menu//
@@ -81,18 +79,12 @@ class App extends Component {
 
         return <h1>{teamName[0].name}</h1>
     }
- 
-
-    renderTest = (state) => {
-        alert(state)
-    }
 
     render() {
-        const { roster, teams, teamID, drawerVisible, loading, err, errMessage } = this.state
+        const { roster, teams, teamID, drawerVisible, loading } = this.state
 
         return (
             <React.Fragment>
-
                 <div className='header-container'>
                     <div>
                         <Button onClick={() => this.setState({ drawerVisible: true })}>
