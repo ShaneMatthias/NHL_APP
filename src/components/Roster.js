@@ -90,7 +90,7 @@ export default class Roster extends React.Component {
         })
         .then(res => res.json())
         .then(body => this.fetchCountry(body))
-        .catch(err => console.log(err))
+        .catch(err => alert(err))
     }
 
     ////////////////////////////////////
@@ -106,7 +106,7 @@ export default class Roster extends React.Component {
         .then(body => this.setState({ country: body, player: player  }, () => {
             this.setState({ modalVisible: true, loading: false })
         }))
-        .catch(err => console.log(err))
+        .catch(err => alert(err))
     }
 
     render() {

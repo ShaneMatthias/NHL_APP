@@ -11,20 +11,20 @@ class App extends Component {
         teams: [],
         teamID: 0,
         drawerVisible: false,
-        loading: true
+        loading: true,
     }
 
     //////////////////////////////////
     //Fetching teams for drawer menu//
     componentDidMount() {
-        fetch('https://statsapi.web.nhl.com/api/vs1/teams',{ 
+        fetch('https://statsapi.web.nhl.com/api/v1/teams',{ 
             method: "GET"
         })
         .then(res => res.json())
         .then(body => this.setState({ teams: body.teams }, () => {
             this.setState({ loading: false })
         }))
-        .catch(err => alert("ERROR BITCH"))
+        .catch(err => alert(err))
     }
 
     ////////////////////////////////////
@@ -42,7 +42,7 @@ class App extends Component {
         .then(body => this.setState({ roster: body.roster, teamID: item.key }, ()=> {
             this.setState({ loading: false })
         }))
-        .catch(err => console.log(err))
+        .catch(err => alert(err))
     }
 
     ///////////////////////////////
